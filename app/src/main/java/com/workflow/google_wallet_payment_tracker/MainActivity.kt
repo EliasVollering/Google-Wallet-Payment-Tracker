@@ -4,14 +4,17 @@ import android.app.Activity
 import android.app.Notification
 import android.content.ComponentName
 import android.content.Intent
+import android.content.pm.PackageManager
 import android.os.Bundle
 import android.provider.Settings
 import android.service.notification.NotificationListenerService
 import android.service.notification.StatusBarNotification
+import android.util.Log
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
@@ -30,7 +33,7 @@ var temp_title = ""
 
 
 class MainActivity : ComponentActivity() {
-    private val notificationPermissionCode = 1001
+    private val notificationPermissionCode = 1001 //can probably remove this
     private val notificationPermissionLauncher = registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
         if (result.resultCode == Activity.RESULT_OK) {
             // Check if notification access permission is granted after the user returns from the settings activity
@@ -70,11 +73,18 @@ class MainActivity : ComponentActivity() {
 
 }
 
-class NotificationListener : NotificationListenerService() {
+class NotificationListener : NotificationListenerService() { //this needs database storage ability likely using shared preferences
     override fun onNotificationPosted(notification: StatusBarNotification) {
+        val packageManager = applicationContext.packageManager
+        val appName = try {
+            packageManager.getApplicationLabel(packageManager.getApplicationInfo(notification.packageName, PackageManager.GET_META_DATA)).toString()
+        } catch (e: PackageManager.NameNotFoundException) {
+            notification.packageName
+        }
         val title = notification.notification.extras.getString(Notification.EXTRA_TITLE)
         val text = notification.notification.extras.getString(Notification.EXTRA_TEXT)
-        temp_title = title.toString()
+        temp_title = appName.toString() + ": " + title.toString()
+        Log.d("Notification Added", appName.toString() + ": " + title.toString() )
         // Store the notification title and text in SharedPreferences or a database
     }
 
@@ -90,7 +100,10 @@ fun Greeting( modifier: Modifier = Modifier) {
         mutableStateOf(temp_title)
     }
     Box(modifier = modifier.fillMaxSize(), Alignment.Center) {
-        Text(text = refreshNotifications.value)
+        Column{
+            Text(text = "Testing Text: ")
+            Text(text = refreshNotifications.value)
+        }
     }
 }
 
