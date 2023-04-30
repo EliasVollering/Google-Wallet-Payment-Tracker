@@ -72,7 +72,7 @@ class MainActivity : ComponentActivity() {
 
 
 }
-
+//test
 class NotificationListener : NotificationListenerService() { //this needs database storage ability likely using shared preferences
     override fun onNotificationPosted(notification: StatusBarNotification) {
         val packageManager = applicationContext.packageManager
