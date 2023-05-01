@@ -3,6 +3,7 @@ package com.workflow.google_wallet_payment_tracker
 import android.app.Activity
 import android.app.Notification
 import android.content.ComponentName
+import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.os.Bundle
@@ -26,11 +27,17 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.core.app.NotificationManagerCompat
+import androidx.room.Room
+import com.workflow.google_wallet_payment_tracker.data.AppDatabase
+import com.workflow.google_wallet_payment_tracker.data.Purchase
+import com.workflow.google_wallet_payment_tracker.data.PurchaseDao
 import com.workflow.google_wallet_payment_tracker.ui.theme.GoogleWalletPaymentTrackerTheme
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 
 
 var temp_title = ""
-
 
 class MainActivity : ComponentActivity() {
     private val notificationPermissionCode = 1001 //can probably remove this
@@ -88,8 +95,10 @@ class NotificationListener : NotificationListenerService() { //this needs databa
         }
         temp_title = appName.toString() + ": " + title.toString()
         Log.d("Notification Added", appName.toString() + ": " + title.toString() )
-
-        // Store the notification title and text in SharedPreferences or a database
+        val newcontext = this
+        CoroutineScope(Dispatchers.IO).launch {
+            AppDatabase.getDatabase(newcontext).purchaseDao().upsertPurchase(Purchase("Store A", "2023-05-01", 10.99, "Card 1"))
+        }
     }
 
     override fun onNotificationRemoved(notification: StatusBarNotification) {
@@ -110,6 +119,7 @@ fun Greeting( modifier: Modifier = Modifier) {
             Text(text = refreshNotifications.value)
         }
     }
+
 }
 
 @Preview(showBackground = true)
