@@ -1,4 +1,4 @@
-package com.workflow.google_wallet_payment_tracker
+package com.workflow.google_wallet_payment_tracker.data
 
 import androidx.room.Database
 import android.content.Context

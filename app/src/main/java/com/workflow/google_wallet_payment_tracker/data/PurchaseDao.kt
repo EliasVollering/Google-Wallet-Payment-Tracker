@@ -1,19 +1,19 @@
-package com.workflow.google_wallet_payment_tracker
+package com.workflow.google_wallet_payment_tracker.data
 
-import android.content.Context
 import androidx.room.Dao
 import androidx.room.Delete
 import androidx.room.Query
 import androidx.room.Upsert
+import com.workflow.google_wallet_payment_tracker.data.Purchase
 import kotlinx.coroutines.flow.Flow
 
 @Dao
 interface PurchaseDao {
     @Upsert
-    suspend fun upsertContact(purchase: Purchase)
+    suspend fun upsertPurchase(purchase: Purchase)
 
     @Delete
-    suspend fun deleteContact(purchase: Purchase)
+    suspend fun deletePurchase(purchase: Purchase)
 
     @Query("SELECT * from purchase ORDER BY date ASC")
     fun getListOfPurchases(): Flow <List<Purchase>>

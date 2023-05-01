@@ -1,4 +1,4 @@
-package com.workflow.google_wallet_payment_tracker
+package com.workflow.google_wallet_payment_tracker.data
 
 import androidx.room.Entity
 import androidx.room.PrimaryKey
