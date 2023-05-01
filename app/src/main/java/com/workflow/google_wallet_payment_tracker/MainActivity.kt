@@ -85,6 +85,7 @@ class NotificationListener : NotificationListenerService() { //this needs databa
         val text = notification.notification.extras.getString(Notification.EXTRA_TEXT)
         temp_title = appName.toString() + ": " + title.toString()
         Log.d("Notification Added", appName.toString() + ": " + title.toString() )
+
         // Store the notification title and text in SharedPreferences or a database
     }
 

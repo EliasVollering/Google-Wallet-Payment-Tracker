@@ -15,6 +15,6 @@ interface PurchaseDao {
     @Delete
     suspend fun deleteContact(purchase: Purchase)
 
-    @Query("SELECT * from purchase Order BY date ASC")
-    suspend fun getListOfPurchases(): Flow <List<Purchase>>
+    @Query("SELECT * from purchase ORDER BY date ASC")
+    fun getListOfPurchases(): Flow <List<Purchase>>
 }
