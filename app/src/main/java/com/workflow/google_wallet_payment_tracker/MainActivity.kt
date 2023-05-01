@@ -27,7 +27,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.core.app.NotificationManagerCompat
 import com.workflow.google_wallet_payment_tracker.ui.theme.GoogleWalletPaymentTrackerTheme
-//test comment for dev branch
+
 
 var temp_title = ""
 
@@ -83,6 +83,9 @@ class NotificationListener : NotificationListenerService() { //this needs databa
         }
         val title = notification.notification.extras.getString(Notification.EXTRA_TITLE)
         val text = notification.notification.extras.getString(Notification.EXTRA_TEXT)
+        if (appName.toString() == "Google Pay"){
+
+        }
         temp_title = appName.toString() + ": " + title.toString()
         Log.d("Notification Added", appName.toString() + ": " + title.toString() )
 
@@ -93,6 +96,7 @@ class NotificationListener : NotificationListenerService() { //this needs databa
         // Handle notification removal if necessary
     }
 }
+
 
 
 @Composable
