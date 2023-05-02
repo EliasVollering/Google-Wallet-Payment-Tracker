@@ -1,5 +1,6 @@
 package com.workflow.google_wallet_payment_tracker.data
 
+import androidx.lifecycle.LiveData
 import androidx.room.Dao
 import androidx.room.Delete
 import androidx.room.Query
@@ -15,6 +16,7 @@ interface PurchaseDao {
     @Delete
     suspend fun deletePurchase(purchase: Purchase)
 
-    @Query("SELECT * from purchase ORDER BY date ASC")
+    @Query("SELECT * FROM purchase ORDER BY date DESC")
     fun getListOfPurchases(): Flow <List<Purchase>>
+
 }
