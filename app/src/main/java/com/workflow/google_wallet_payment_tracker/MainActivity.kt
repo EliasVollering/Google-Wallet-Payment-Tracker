@@ -1,6 +1,7 @@
 package com.workflow.google_wallet_payment_tracker
 
 import android.app.Activity
+import android.app.Application
 import android.app.Notification
 import android.content.ComponentName
 import android.content.Context
@@ -10,9 +11,11 @@ import android.os.Bundle
 import android.provider.Settings
 import android.service.notification.NotificationListenerService
 import android.service.notification.StatusBarNotification
+import android.util.Log
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
@@ -27,6 +30,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.core.app.NotificationManagerCompat
+import androidx.lifecycle.AndroidViewModel
 import com.workflow.google_wallet_payment_tracker.data.AppDatabase
 import com.workflow.google_wallet_payment_tracker.data.Purchase
 import com.workflow.google_wallet_payment_tracker.ui.theme.GoogleWalletPaymentTrackerTheme
@@ -98,15 +102,15 @@ class NotificationListener : NotificationListenerService() { //this needs databa
         }
         val location = notification.notification.extras.getString(Notification.EXTRA_TITLE).toString()
         val text = notification.notification.extras.getString(Notification.EXTRA_TEXT).toString()
-
+        /*
         val newcontext = this
         CoroutineScope(Dispatchers.IO).launch {
-            AppDatabase.getDatabase(newcontext).purchaseDao().upsertPurchase(Purchase(location,text)
+            AppDatabase.getDatabase(newcontext).purchaseDao().upsertPurchase(Purchase(appName,location)
             )
-        }
+        }*/
 
 
-        /*
+
         /////////////////////////////////////////////DATE///////////////////////////////////////
         val timestamp = notification.postTime
 
@@ -114,16 +118,16 @@ class NotificationListener : NotificationListenerService() { //this needs databa
         val dateFormat = SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.getDefault())
         val dateString = dateFormat.format(date)
         ///////////////////////////////////////////////////////////////////////////////////////
-        */
 
-        /*if (appName.toString() == "Google Pay"){
+
+        if ((appName.toString() == "Google Pay") or (appName.toString() == "Google Wallet") ){
             val newcontext = this
             CoroutineScope(Dispatchers.IO).launch {
                 AppDatabase.getDatabase(newcontext).purchaseDao().upsertPurchase(Purchase(
                     location.toString(), dateString, toMoney(text).toDouble(), toCard(text))
                 )
             }
-        }*/
+        }
     }
     override fun onNotificationRemoved(notification: StatusBarNotification) {
         // Handle notification removal if necessary
@@ -131,49 +135,47 @@ class NotificationListener : NotificationListenerService() { //this needs databa
 }
 
 
-
 @Composable
 fun Greeting( modifier: Modifier = Modifier, context: Context) {
     val purchaseDao = AppDatabase.getDatabase(context).purchaseDao()
     val purchaseList by purchaseDao.getListOfPurchases().collectAsState(initial = emptyList())
-    for (purchase in purchaseList){
-        
-    }
+    
     Text(text = "its working btw")
-    LazyColumn(modifier = modifier.fillMaxSize()){
-        for (purchase in purchaseList){
-            item {
-                Column(
-                    modifier = Modifier.padding(16.dp)
-                ) {
-                    Text(
-                        text = purchase.title,
-                        style = MaterialTheme.typography.bodyMedium
-                    )
-                    Text(
-                        text = purchase.text,
-                        style = MaterialTheme.typography.bodyMedium
-                    )
+    if(purchaseList.isEmpty()){
+            Text(text = "database is Empty!")
 
-                    /*
-                    Text(
-                        text = purchase.location,
-                        style = MaterialTheme.typography.bodyMedium
-                    )
-                    Text(
-                        text = purchase.date,
-                        style = MaterialTheme.typography.bodySmall
-                    )
-                    Text(
-                        text = purchase.amount.toString(),
-                        style = MaterialTheme.typography.bodySmall
-                    )
-                    Text(
-                        text = purchase.card,
-                        style = MaterialTheme.typography.bodySmall
-                    )
 
-                     */
+        Log.d("EMPTY", " Not INSIDE")
+    }
+    else{
+        LazyColumn(modifier = modifier.fillMaxSize()){
+            Log.d("NOT EMPTY", "INSIDE")
+            for (purchase in purchaseList){
+                item {
+                    Column(
+                        modifier = Modifier.padding(16.dp)
+                    ) {
+
+
+                        Text(
+                            text = purchase.location,
+                            style = MaterialTheme.typography.bodyMedium
+                        )
+                        Text(
+                            text = purchase.date,
+                            style = MaterialTheme.typography.bodySmall
+                        )
+                        Text(
+                            text = purchase.amount.toString(),
+                            style = MaterialTheme.typography.bodySmall
+                        )
+                        Text(
+                            text = purchase.card,
+                            style = MaterialTheme.typography.bodySmall
+                        )
+    
+
+                    }
                 }
             }
         }

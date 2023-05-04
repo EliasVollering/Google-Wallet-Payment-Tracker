@@ -3,7 +3,7 @@ package com.workflow.google_wallet_payment_tracker.data
 import androidx.room.Entity
 import androidx.room.PrimaryKey
 
-
+/*
 @Entity()
 data class Purchase(
     val title: String,
@@ -12,8 +12,9 @@ data class Purchase(
     val id: Int = 0,
 )
 
+ */
 
-/* REAL DATA ClASS
+
 @Entity()
 data class Purchase(
     val location: String,
@@ -23,4 +24,3 @@ data class Purchase(
     @PrimaryKey(autoGenerate = true)
     val id: Int = 0,
 )
- */
