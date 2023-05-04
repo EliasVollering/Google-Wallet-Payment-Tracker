@@ -96,24 +96,34 @@ class NotificationListener : NotificationListenerService() { //this needs databa
         } catch (e: PackageManager.NameNotFoundException) {
             notification.packageName
         }
-        val location = notification.notification.extras.getString(Notification.EXTRA_TITLE)
+        val location = notification.notification.extras.getString(Notification.EXTRA_TITLE).toString()
         val text = notification.notification.extras.getString(Notification.EXTRA_TEXT).toString()
+
+        val newcontext = this
+        CoroutineScope(Dispatchers.IO).launch {
+            AppDatabase.getDatabase(newcontext).purchaseDao().upsertPurchase(Purchase(location,text)
+            )
+        }
+
+
+        /*
+        /////////////////////////////////////////////DATE///////////////////////////////////////
         val timestamp = notification.postTime
 
-        /////////////////////////////////////////////DATE///////////////////////////////////////
         val date = Date(timestamp)
         val dateFormat = SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.getDefault())
         val dateString = dateFormat.format(date)
         ///////////////////////////////////////////////////////////////////////////////////////
+        */
 
-        if (appName.toString() == "Google Pay"){
+        /*if (appName.toString() == "Google Pay"){
             val newcontext = this
             CoroutineScope(Dispatchers.IO).launch {
                 AppDatabase.getDatabase(newcontext).purchaseDao().upsertPurchase(Purchase(
                     location.toString(), dateString, toMoney(text).toDouble(), toCard(text))
                 )
             }
-        }
+        }*/
     }
     override fun onNotificationRemoved(notification: StatusBarNotification) {
         // Handle notification removal if necessary
@@ -129,12 +139,23 @@ fun Greeting( modifier: Modifier = Modifier, context: Context) {
     for (purchase in purchaseList){
         
     }
+    Text(text = "its working btw")
     LazyColumn(modifier = modifier.fillMaxSize()){
         for (purchase in purchaseList){
             item {
                 Column(
                     modifier = Modifier.padding(16.dp)
                 ) {
+                    Text(
+                        text = purchase.title,
+                        style = MaterialTheme.typography.bodyMedium
+                    )
+                    Text(
+                        text = purchase.text,
+                        style = MaterialTheme.typography.bodyMedium
+                    )
+
+                    /*
                     Text(
                         text = purchase.location,
                         style = MaterialTheme.typography.bodyMedium
@@ -151,6 +172,8 @@ fun Greeting( modifier: Modifier = Modifier, context: Context) {
                         text = purchase.card,
                         style = MaterialTheme.typography.bodySmall
                     )
+
+                     */
                 }
             }
         }
