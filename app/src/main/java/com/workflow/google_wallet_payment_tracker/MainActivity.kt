@@ -109,8 +109,6 @@ class NotificationListener : NotificationListenerService() { //this needs databa
             )
         }*/
 
-
-
         /////////////////////////////////////////////DATE///////////////////////////////////////
         val timestamp = notification.postTime
 
@@ -118,16 +116,21 @@ class NotificationListener : NotificationListenerService() { //this needs databa
         val dateFormat = SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.getDefault())
         val dateString = dateFormat.format(date)
         ///////////////////////////////////////////////////////////////////////////////////////
-
-
-        if ((appName.toString() == "Google Pay") or (appName.toString() == "Google Wallet") ){
-            val newcontext = this
-            CoroutineScope(Dispatchers.IO).launch {
-                AppDatabase.getDatabase(newcontext).purchaseDao().upsertPurchase(Purchase(
-                    location.toString(), dateString, toMoney(text).toDouble(), toCard(text))
-                )
-            }
+        val newcontext = this
+        CoroutineScope(Dispatchers.IO).launch {
+            AppDatabase.getDatabase(newcontext).purchaseDao().upsertPurchase(Purchase(
+                location, dateString, 5.00, "1908")
+            )
         }
+
+        //if ((appName.toString() == "Google Pay") or (appName.toString() == "Google Wallet") ){}
+        /*
+        AppDatabase.getDatabase(newcontext).purchaseDao().upsertPurchase(Purchase(
+            location, dateString, toMoney(text).toDouble(), toCard(text))
+        )
+
+         */
+
     }
     override fun onNotificationRemoved(notification: StatusBarNotification) {
         // Handle notification removal if necessary
@@ -155,8 +158,6 @@ fun Greeting( modifier: Modifier = Modifier, context: Context) {
                     Column(
                         modifier = Modifier.padding(16.dp)
                     ) {
-
-
                         Text(
                             text = purchase.location,
                             style = MaterialTheme.typography.bodyMedium
@@ -173,8 +174,6 @@ fun Greeting( modifier: Modifier = Modifier, context: Context) {
                             text = purchase.card,
                             style = MaterialTheme.typography.bodySmall
                         )
-    
-
                     }
                 }
             }
