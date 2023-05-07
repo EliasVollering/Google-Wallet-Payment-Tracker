@@ -13,6 +13,7 @@ import android.service.notification.StatusBarNotification
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
@@ -23,6 +24,7 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -124,7 +126,9 @@ fun Greeting( modifier: Modifier = Modifier, context: Context) {
     
 
     if(purchaseList.isEmpty()){
-        Text(text = "database is Empty!")
+        Box(modifier = modifier.fillMaxSize(), Alignment.Center){
+            Text(text = "database is Empty!")
+        }
     }
     else{
         LazyColumn(modifier = modifier.fillMaxSize()){
