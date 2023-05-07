@@ -108,10 +108,16 @@ class NotificationListener : NotificationListenerService() {
         if (appName.toString() == "Google"){
             CoroutineScope(Dispatchers.IO).launch {
                 AppDatabase.getDatabase(newcontext).purchaseDao().upsertPurchase(Purchase(
-                    location, dateString, toMoney(text).toDouble(), toCard(text))
+                    location, dateString, 5.00, "test card")
                 )
             }
         }
+        /*
+        AppDatabase.getDatabase(newcontext).purchaseDao().upsertPurchase(Purchase(
+            location, dateString, toMoney(text).toDouble(), toCard(text))
+        )
+
+         */
     }
     override fun onNotificationRemoved(notification: StatusBarNotification) {
         // Handle notification removal if necessary
