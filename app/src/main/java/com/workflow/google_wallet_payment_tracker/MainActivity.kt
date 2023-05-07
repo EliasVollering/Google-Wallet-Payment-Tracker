@@ -1,7 +1,6 @@
 package com.workflow.google_wallet_payment_tracker
 
 import android.app.Activity
-import android.app.Application
 import android.app.Notification
 import android.content.ComponentName
 import android.content.Context
@@ -11,11 +10,9 @@ import android.os.Bundle
 import android.provider.Settings
 import android.service.notification.NotificationListenerService
 import android.service.notification.StatusBarNotification
-import android.util.Log
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.result.contract.ActivityResultContracts
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
@@ -30,7 +27,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.core.app.NotificationManagerCompat
-import androidx.lifecycle.AndroidViewModel
 import com.workflow.google_wallet_payment_tracker.data.AppDatabase
 import com.workflow.google_wallet_payment_tracker.data.Purchase
 import com.workflow.google_wallet_payment_tracker.ui.theme.GoogleWalletPaymentTrackerTheme
@@ -79,8 +75,6 @@ class MainActivity : ComponentActivity() {
         val intent = Intent(Settings.ACTION_NOTIFICATION_LISTENER_SETTINGS)
         notificationPermissionLauncher.launch(intent)
     }
-
-
 }
 
 fun toMoney(input:String): String{
@@ -104,14 +98,11 @@ class NotificationListener : NotificationListenerService() {
         val text = notification.notification.extras.getString(Notification.EXTRA_TEXT).toString()
         /////////////////////////////////////////////DATE///////////////////////////////////////
         val timestamp = notification.postTime
-
         val date = Date(timestamp)
         val dateFormat = SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.getDefault())
         val dateString = dateFormat.format(date)
         ///////////////////////////////////////////////////////////////////////////////////////
         val newcontext = this
-        //dsdsf
-
         if (appName.toString() == "Google"){
             CoroutineScope(Dispatchers.IO).launch {
                 AppDatabase.getDatabase(newcontext).purchaseDao().upsertPurchase(Purchase(
@@ -131,16 +122,12 @@ fun Greeting( modifier: Modifier = Modifier, context: Context) {
     val purchaseDao = AppDatabase.getDatabase(context).purchaseDao()
     val purchaseList by purchaseDao.getListOfPurchases().collectAsState(initial = emptyList())
     
-    Text(text = "its working btw")
+
     if(purchaseList.isEmpty()){
-            Text(text = "database is Empty!")
-
-
-        Log.d("EMPTY", " Not INSIDE")
+        Text(text = "database is Empty!")
     }
     else{
         LazyColumn(modifier = modifier.fillMaxSize()){
-            Log.d("NOT EMPTY", "INSIDE")
             for (purchase in purchaseList){
                 item {
                     Column(
