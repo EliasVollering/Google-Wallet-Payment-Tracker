@@ -87,7 +87,7 @@ fun toMoney(input: String): Double {
     return input.substring(input.indexOf('$') + 1, input.indexOf(' ')).toDouble()
 }
 fun toCard(input:String):String{
-    return input.substring(-4)
+    return input.substring(input.length - 4)
     /*
     val cardNumberRegex = Regex("""\*{4}\s+(\d{4})""")
     return cardNumberRegex.find(input)?.groupValues?.get(1).toString()
@@ -112,20 +112,13 @@ class NotificationListener : NotificationListenerService() {
         val dateString = dateFormat.format(date)
         ///////////////////////////////////////////////////////////////////////////////////////
         val newcontext = this
-        if ((appName.toString()).indexOf("Google") >= 0){
+        if (((appName.toString()).indexOf("Google") >= 0) && (text.indexOf("$") >= 0)){
             CoroutineScope(Dispatchers.IO).launch {
                 AppDatabase.getDatabase(newcontext).purchaseDao().upsertPurchase(Purchase(
                     location, dateString, toMoney(text), toCard(text))
                 )
             }
         }
-
-        /*
-        AppDatabase.getDatabase(newcontext).purchaseDao().upsertPurchase(Purchase(
-            location, dateString, toMoney(text).toDouble(), toCard(text))
-        )
-
-         */
     }
     override fun onNotificationRemoved(notification: StatusBarNotification) {
         // Handle notification removal if necessary
