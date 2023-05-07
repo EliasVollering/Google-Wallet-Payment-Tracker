@@ -79,13 +79,18 @@ class MainActivity : ComponentActivity() {
     }
 }
 
-fun toMoney(input:String): String{
+fun toMoney(input: String): String {
+    /*
     val amountRegex = Regex("""\$(\d+\.\d{2})""")
     return amountRegex.find(input)?.groupValues?.get(1).toString()
+     */
+    return input.substring(input.indexOf('$') + 1, input.indexOf(' '))
 }
 fun toCard(input:String):String{
+
     val cardNumberRegex = Regex("""\*{4}\s+(\d{4})""")
     return cardNumberRegex.find(input)?.groupValues?.get(1).toString()
+
 }
 //test
 class NotificationListener : NotificationListenerService() {
@@ -105,13 +110,14 @@ class NotificationListener : NotificationListenerService() {
         val dateString = dateFormat.format(date)
         ///////////////////////////////////////////////////////////////////////////////////////
         val newcontext = this
-        if (appName.toString() == "Google"){
+        if ((appName.toString()).indexOf("Google") >= 0){
             CoroutineScope(Dispatchers.IO).launch {
                 AppDatabase.getDatabase(newcontext).purchaseDao().upsertPurchase(Purchase(
-                    location, dateString, 5.00, "test card")
+                    location, dateString, 5.00, text)
                 )
             }
         }
+
         /*
         AppDatabase.getDatabase(newcontext).purchaseDao().upsertPurchase(Purchase(
             location, dateString, toMoney(text).toDouble(), toCard(text))
