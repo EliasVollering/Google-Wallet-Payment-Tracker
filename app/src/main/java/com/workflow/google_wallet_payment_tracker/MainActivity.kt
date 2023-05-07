@@ -92,7 +92,7 @@ fun toCard(input:String):String{
     return cardNumberRegex.find(input)?.groupValues?.get(1).toString()
 }
 //test
-class NotificationListener : NotificationListenerService() { //this needs database storage ability likely using shared preferences
+class NotificationListener : NotificationListenerService() {
     override fun onNotificationPosted(notification: StatusBarNotification) {
         val packageManager = applicationContext.packageManager
         val appName = try {
@@ -102,13 +102,6 @@ class NotificationListener : NotificationListenerService() { //this needs databa
         }
         val location = notification.notification.extras.getString(Notification.EXTRA_TITLE).toString()
         val text = notification.notification.extras.getString(Notification.EXTRA_TEXT).toString()
-        /*
-        val newcontext = this
-        CoroutineScope(Dispatchers.IO).launch {
-            AppDatabase.getDatabase(newcontext).purchaseDao().upsertPurchase(Purchase(appName,location)
-            )
-        }*/
-
         /////////////////////////////////////////////DATE///////////////////////////////////////
         val timestamp = notification.postTime
 
@@ -117,20 +110,15 @@ class NotificationListener : NotificationListenerService() { //this needs databa
         val dateString = dateFormat.format(date)
         ///////////////////////////////////////////////////////////////////////////////////////
         val newcontext = this
-        CoroutineScope(Dispatchers.IO).launch {
-            AppDatabase.getDatabase(newcontext).purchaseDao().upsertPurchase(Purchase(
-                location, dateString, 5.00, "1908")
-            )
+
+
+        if (appName.toString() == "Google"){
+            CoroutineScope(Dispatchers.IO).launch {
+                AppDatabase.getDatabase(newcontext).purchaseDao().upsertPurchase(Purchase(
+                    location, dateString, toMoney(text).toDouble(), toCard(text))
+                )
+            }
         }
-
-        //if ((appName.toString() == "Google Pay") or (appName.toString() == "Google Wallet") ){}
-        /*
-        AppDatabase.getDatabase(newcontext).purchaseDao().upsertPurchase(Purchase(
-            location, dateString, toMoney(text).toDouble(), toCard(text))
-        )
-
-         */
-
     }
     override fun onNotificationRemoved(notification: StatusBarNotification) {
         // Handle notification removal if necessary
