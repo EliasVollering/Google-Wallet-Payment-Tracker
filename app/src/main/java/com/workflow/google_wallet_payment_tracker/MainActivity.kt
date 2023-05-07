@@ -39,11 +39,11 @@ import java.util.Locale
 
 
 class MainActivity : ComponentActivity() {
-    private val notificationPermissionCode = 1001 //can probably remove this
     private val notificationPermissionLauncher = registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
         if (result.resultCode == Activity.RESULT_OK) {
             // Check if notification access permission is granted after the user returns from the settings activity
             if (!isNotificationAccessGranted()) {
+                finishAffinity()
                 // Permission still not granted, handle this case appropriately
             }
         }
