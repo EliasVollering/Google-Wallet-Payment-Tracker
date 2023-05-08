@@ -29,6 +29,7 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -134,9 +135,7 @@ fun MainDisplay( modifier: Modifier = Modifier, context: Context) {
     yyyy-MM-dd
      */
     var totalSpent = 0.0
-
     for (purchase in purchasedToday){
-        Log.d("IDk", "${purchase.amount}")
         totalSpent += purchase.amount
     }
 
@@ -151,7 +150,9 @@ fun MainDisplay( modifier: Modifier = Modifier, context: Context) {
                 item {
                     Box(modifier = modifier.fillMaxSize()){
                         Column(
-                            modifier = modifier.fillMaxSize().align(Alignment.Center),
+                            modifier = modifier
+                                .fillMaxSize()
+                                .align(Alignment.Center),
                             horizontalAlignment = Alignment.CenterHorizontally
                         ) {
                             Text(
@@ -162,6 +163,12 @@ fun MainDisplay( modifier: Modifier = Modifier, context: Context) {
                                 text = "$$totalSpent",
                                 fontSize = 60.sp
                             )
+                            if (totalSpent < 28){
+                                Text(text = "Your below budget!!", color = Color.Green)
+                            }
+                            else{
+                                Text(text = "You've spent more than your budget today", color = Color.Red)
+                            }
                         }
                     }
                 }
