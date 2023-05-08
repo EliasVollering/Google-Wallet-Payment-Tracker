@@ -46,7 +46,7 @@ class MainActivity : ComponentActivity() {
             // Check if notification access permission is granted after the user returns from the settings activity
             if (!isNotificationAccessGranted()) {
                 finishAffinity()
-                // Permission still not granted, handle this case appropriately
+                // Permission still not granted
             }
         }
     }
@@ -80,19 +80,10 @@ class MainActivity : ComponentActivity() {
 }
 
 fun toMoney(input: String): Double {
-    /*
-    val amountRegex = Regex("""\$(\d+\.\d{2})""")
-    return amountRegex.find(input)?.groupValues?.get(1).toString()
-     */
     return input.substring(input.indexOf('$') + 1, input.indexOf(' ')).toDouble()
 }
 fun toCard(input:String):String{
     return input.substring(input.length - 4)
-    /*
-    val cardNumberRegex = Regex("""\*{4}\s+(\d{4})""")
-    return cardNumberRegex.find(input)?.groupValues?.get(1).toString()
-     */
-
 }
 //test
 class NotificationListener : NotificationListenerService() {
@@ -130,7 +121,6 @@ class NotificationListener : NotificationListenerService() {
 fun Greeting( modifier: Modifier = Modifier, context: Context) {
     val purchaseDao = AppDatabase.getDatabase(context).purchaseDao()
     val purchaseList by purchaseDao.getListOfPurchases().collectAsState(initial = emptyList())
-    
 
     if(purchaseList.isEmpty()){
         Box(modifier = modifier.fillMaxSize(), Alignment.Center){
