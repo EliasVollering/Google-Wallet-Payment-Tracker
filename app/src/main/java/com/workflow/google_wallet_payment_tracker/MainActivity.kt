@@ -6,13 +6,16 @@ import android.content.ComponentName
 import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager
+import android.os.Build
 import android.os.Bundle
 import android.provider.Settings
 import android.service.notification.NotificationListenerService
 import android.service.notification.StatusBarNotification
+import android.util.Log
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.annotation.RequiresApi
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
@@ -28,6 +31,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import androidx.core.app.NotificationManagerCompat
 import com.workflow.google_wallet_payment_tracker.data.AppDatabase
 import com.workflow.google_wallet_payment_tracker.data.Purchase
@@ -38,6 +42,8 @@ import kotlinx.coroutines.launch
 import java.text.SimpleDateFormat
 import java.util.Date
 import java.util.Locale
+import java.time.LocalDate
+import java.time.format.DateTimeFormatter
 
 
 class MainActivity : ComponentActivity() {
@@ -50,6 +56,7 @@ class MainActivity : ComponentActivity() {
             }
         }
     }
+    @RequiresApi(Build.VERSION_CODES.O)
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContent {
@@ -59,7 +66,7 @@ class MainActivity : ComponentActivity() {
                     modifier = Modifier.fillMaxSize(),
                     color = MaterialTheme.colorScheme.background
                 ) {
-                    Greeting(modifier = Modifier, this)
+                    MainDisplay(modifier = Modifier, this)
                 }
             }
         }
@@ -117,45 +124,76 @@ class NotificationListener : NotificationListenerService() {
 }
 
 
+@RequiresApi(Build.VERSION_CODES.O)
 @Composable
-fun Greeting( modifier: Modifier = Modifier, context: Context) {
+fun MainDisplay( modifier: Modifier = Modifier, context: Context) {
     val purchaseDao = AppDatabase.getDatabase(context).purchaseDao()
     val purchaseList by purchaseDao.getListOfPurchases().collectAsState(initial = emptyList())
+    val purchasedToday by purchaseDao.getListOfPurchasesOnDay(LocalDate.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd"))).collectAsState(initial = emptyList())
+    /*
+    yyyy-MM-dd
+     */
+    var totalSpent = 0.0
 
-    if(purchaseList.isEmpty()){
-        Box(modifier = modifier.fillMaxSize(), Alignment.Center){
-            Text(text = "database is Empty!")
-        }
+    for (purchase in purchasedToday){
+        Log.d("IDk", "${purchase.amount}")
+        totalSpent += purchase.amount
     }
-    else{
-        LazyColumn(modifier = modifier.fillMaxSize()){
-            for (purchase in purchaseList){
+
+    Box(modifier = modifier.fillMaxSize()){
+        if(purchaseList.isEmpty()){
+            Box(modifier = modifier.fillMaxSize(), Alignment.Center){
+                Text(text = "database is Empty!")
+            }
+        }
+        else{
+            LazyColumn(modifier = modifier.fillMaxSize()){
                 item {
-                    Column(
-                        modifier = Modifier.padding(16.dp)
-                    ) {
-                        Text(
-                            text = purchase.location,
-                            style = MaterialTheme.typography.bodyMedium
-                        )
-                        Text(
-                            text = purchase.date,
-                            style = MaterialTheme.typography.bodySmall
-                        )
-                        Text(
-                            text = purchase.amount.toString(),
-                            style = MaterialTheme.typography.bodySmall
-                        )
-                        Text(
-                            text = purchase.card,
-                            style = MaterialTheme.typography.bodySmall
-                        )
+                    Box(modifier = modifier.fillMaxSize()){
+                        Column(
+                            modifier = modifier.fillMaxSize().align(Alignment.Center),
+                            horizontalAlignment = Alignment.CenterHorizontally
+                        ) {
+                            Text(
+                                text = "Total Spent Today:",
+                                fontSize = 30.sp
+                            )
+                            Text(
+                                text = "$$totalSpent",
+                                fontSize = 60.sp
+                            )
+                        }
+                    }
+                }
+                for (purchase in purchaseList){
+                    item {
+                        Column(
+                            modifier = Modifier.padding(16.dp)
+                        ) {
+                            Text(
+                                text = purchase.location,
+                                style = MaterialTheme.typography.bodyMedium
+                            )
+                            Text(
+                                text = purchase.date,
+                                style = MaterialTheme.typography.bodySmall
+                            )
+                            Text(
+                                text = purchase.amount.toString(),
+                                style = MaterialTheme.typography.bodySmall
+                            )
+                            Text(
+                                text = purchase.card,
+                                style = MaterialTheme.typography.bodySmall
+                            )
+                        }
                     }
                 }
             }
         }
     }
 }
+
 
 @Preview(showBackground = true)
 @Composable

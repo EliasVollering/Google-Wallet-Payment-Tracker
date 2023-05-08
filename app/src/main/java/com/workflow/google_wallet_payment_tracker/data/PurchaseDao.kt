@@ -19,5 +19,7 @@ interface PurchaseDao {
     @Query("SELECT * FROM purchase ORDER BY date DESC")
     fun getListOfPurchases(): Flow <List<Purchase>>
 
+    @Query("SELECT * FROM Purchase WHERE date LIKE :searchDate || '%'")
+    fun getListOfPurchasesOnDay(searchDate: String): Flow<List<Purchase>>
 
 }
